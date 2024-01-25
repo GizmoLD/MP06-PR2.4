@@ -16,7 +16,7 @@ public class Autor implements Serializable {
     @Column(name = "nom")
     private String nom;
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
     private Set<Llibre> llibres;
 
     public Autor() {

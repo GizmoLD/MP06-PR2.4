@@ -68,16 +68,16 @@ public class Biblioteca implements Serializable {
 
     @Override
     public String toString() {
-        String texto = "";
-        for (Llibre l : llibres){
-            texto = texto + l.toString();
-        }
+        //String texto = "";
+        //for (Llibre l : llibres){
+        //    texto = texto + l.toString();
+        //}
 
         return "{" +
             " bibliotecaId='" + getBibliotecaId() + "'" +
             ", nom='" + getNom() + "'" +
             ", ciutat='" + getCiutat() + "'" +
-            ", llibres='" + texto + "'" +
+            //", llibres='" + texto + "'" +
             "}";
     }
 
