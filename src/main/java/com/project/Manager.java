@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session; 
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -16,132 +16,118 @@ import org.hibernate.cfg.Configuration;
 
 public class Manager {
 
-    private static SessionFactory factory; 
-    
+    private static SessionFactory factory;
+
     public static void createSessionFactory() {
 
         try {
             Configuration configuration = new Configuration();
             configuration.configure();
             StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
-            configuration.getProperties()).build();
+                    configuration.getProperties()).build();
             factory = configuration.buildSessionFactory(serviceRegistry);
-        } catch (Throwable ex) { 
+        } catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex); 
+            throw new ExceptionInInitializerError(ex);
         }
     }
 
-    public static void close () {
+    public static void close() {
         factory.close();
     }
-  
-    public static Employee addEmployee(String firstName, String lastName, int salary){
+
+    public static Employee addEmployee(String firstName, String lastName, int salary) {
         Session session = factory.openSession();
         Transaction tx = null;
         Employee result = null;
         try {
             tx = session.beginTransaction();
             result = new Employee(firstName, lastName, salary);
-            session.save(result); 
+            session.save(result);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
             result = null;
         } finally {
-            session.close(); 
+            session.close();
         }
         return result;
     }
 
-    public static Contact addContact(String lname, String lmail){
-        Session session = factory.openSession();
-        Transaction tx = null;
-        Contact result = null;
-        try {
-            tx = session.beginTransaction();
-            result = new Contact(lname, lmail);
-            session.save(result); 
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
-            result = null;
-        } finally {
-            session.close(); 
-        }
-        return result;
-    }
-
-    public static <T> T getById(Class<? extends T> clazz, long id){
+    public static <T> T getById(Class<? extends T> clazz, long id) {
         Session session = factory.openSession();
         Transaction tx = null;
         T obj = null;
         try {
             tx = session.beginTransaction();
-            obj = clazz.cast(session.get(clazz, id)); 
+            obj = clazz.cast(session.get(clazz, id));
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
         return obj;
     }
-    
-    public static void updateContact(long contactId, String name, String email, Set<Employee> employees){
+
+    public static void updateContact(long contactId, String name, String email, Set<Employee> employees) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            Contact obj = (Contact) session.get(Contact.class, contactId); 
+            Contact obj = (Contact) session.get(Contact.class, contactId);
             obj.setName(name);
             obj.setEmail(email);
             obj.setEmployees(employees);
-            session.update(obj); 
+            session.update(obj);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
     }
 
-    public static void updateEmployee(long employeeId, String firstName, String lastName, int salary){
+    public static void updateEmployee(long employeeId, String firstName, String lastName, int salary) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            Employee obj = (Employee) session.get(Employee.class, employeeId); 
+            Employee obj = (Employee) session.get(Employee.class, employeeId);
             obj.setFirstName(firstName);
             obj.setLastName(lastName);
             obj.setSalary(salary);
-            session.update(obj); 
+            session.update(obj);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
     }
-  
-    public static <T> void delete(Class<? extends T> clazz, Serializable id){
+
+    public static <T> void delete(Class<? extends T> clazz, Serializable id) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            T obj = clazz.cast(session.get(clazz, id)); 
-            session.delete(obj); 
+            T obj = clazz.cast(session.get(clazz, id));
+            session.delete(obj);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
     }
 
@@ -149,30 +135,31 @@ public class Manager {
         return listCollection(clazz, "");
     }
 
-    public static <T> Collection<?> listCollection(Class<? extends T> clazz, String where){
+    public static <T> Collection<?> listCollection(Class<? extends T> clazz, String where) {
         Session session = factory.openSession();
         Transaction tx = null;
         Collection<?> result = null;
         try {
             tx = session.beginTransaction();
             if (where.length() == 0) {
-                result = session.createQuery("FROM " + clazz.getName()).list(); 
+                result = session.createQuery("FROM " + clazz.getName()).list();
             } else {
                 result = session.createQuery("FROM " + clazz.getName() + " WHERE " + where).list();
             }
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
         return result;
     }
 
-    public static <T> String collectionToString(Class<? extends T> clazz, Collection<?> collection){
+    public static <T> String collectionToString(Class<? extends T> clazz, Collection<?> collection) {
         String txt = "";
-        for(Object obj: collection) {
+        for (Object obj : collection) {
             T cObj = clazz.cast(obj);
             txt += "\n" + cObj.toString();
         }
@@ -182,7 +169,7 @@ public class Manager {
         return txt;
     }
 
-    public static void queryUpdate (String queryString) {
+    public static void queryUpdate(String queryString) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
@@ -191,14 +178,15 @@ public class Manager {
             query.executeUpdate();
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
     }
 
-    public static List<Object[]> queryTable (String queryString) {
+    public static List<Object[]> queryTable(String queryString) {
         Session session = factory.openSession();
         Transaction tx = null;
         List<Object[]> result = null;
@@ -210,15 +198,16 @@ public class Manager {
             result = rows;
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
         return result;
     }
 
-    public static String tableToString (List<Object[]> rows) {
+    public static String tableToString(List<Object[]> rows) {
         String txt = "";
         for (Object[] row : rows) {
             for (Object cell : row) {
@@ -230,8 +219,171 @@ public class Manager {
             txt += "\n";
         }
         if (txt.length() >= 2) {
-            txt =  txt.substring(0, txt.length() - 2);
+            txt = txt.substring(0, txt.length() - 2);
         }
         return txt;
+    }
+
+    public static Contact addContact(String lname, String lmail) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Contact result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Contact(lname, lmail);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static Llibre addLlibre(String codigo, String editorial) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Llibre result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Llibre(codigo, editorial);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static Biblioteca addBiblioteca(String nombre, String ciudad) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Biblioteca result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Biblioteca(nombre, ciudad);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static void updateBiblioteca(long bibliotecaId, String name, String ciutad, Set<Llibre> llibres){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Biblioteca obj = (Biblioteca) session.get(Biblioteca.class, bibliotecaId);
+            obj.setNom(name);
+            obj.setCiutat(ciutad);
+            obj.setLlibres(llibres);
+            session.update(obj);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static Persona addPersona(String dni, String nom, String telefono){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Persona result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Persona(dni, nom, telefono);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static void updatePersona(long id, String dni, String nom, String telefono, Set<Llibre> llibres){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Persona obj = (Persona) session.get(Persona.class, id);
+            obj.setPersonaId(id);
+            obj.setDni(dni);
+            obj.setNom(nom);
+            obj.setTelefon(telefono);
+            obj.setLlibres(llibres);
+            session.update(obj);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static Autor addAutor(String nom){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Autor result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Autor(nom);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static void updateAutor(long id, String nom, Set<Llibre> llibresAuto){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Autor obj = (Autor) session.get(Autor.class, id);
+            //obj.setAutorId(id);
+            obj.setNom(nom);
+            obj.setLlibres(llibresAuto);
+            session.update(obj);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
     }
 }
