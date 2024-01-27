@@ -95,17 +95,26 @@ public class Persona implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{ personaId='").append(getPersonaId()).append("',");
-        stringBuilder.append(" dni='").append(getDni()).append("',");
-        stringBuilder.append(" nom='").append(getNom()).append("',");
-        stringBuilder.append(" telefon='").append(getTelefon()).append("',");
-        stringBuilder.append(" llibres=[");
+        stringBuilder.append(getPersonaId() + ": ");
+        stringBuilder.append(getTelefon() + ", ");
+        stringBuilder.append("Llibres: [");
         if (llibres != null) {
+            int size = llibres.size();
+            int count = 0;
+
             for (Llibre llibre : llibres) {
-                stringBuilder.append(llibre.toString()).append(", ");
+                count++;
+
+                stringBuilder.append(llibre.getLlibreId()).append(", ")
+                        .append(llibre.getEditorial()).append(", ")
+                        .append(llibre.getNom());
+
+                if (count < size) {
+                    stringBuilder.append(" | ");
+                }
             }
         }
-        stringBuilder.append("]}");
+        stringBuilder.append("]");
         return stringBuilder.toString();
     }
 

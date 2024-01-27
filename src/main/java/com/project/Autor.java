@@ -20,8 +20,8 @@ public class Autor implements Serializable {
     private String nom;
 
     // @JoinColumn(name = "autor_id") /// cascade = CascadeType.ALL
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch=FetchType.EAGER) //por defecto es LAZY
-    //@JoinColumn(name = "autor_id") //autor_id ??
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // por defecto es LAZY
+    // @JoinColumn(name = "llibre_id") //autor_id ??
     private Set<Llibre> llibres;
 
     public Autor() {
@@ -54,32 +54,36 @@ public class Autor implements Serializable {
 
     public void setLlibres(Set<Llibre> llibres) {
         this.llibres = llibres;
+        for (Llibre llibre : llibres) {
+            llibre.setAutor(this);
+        }
     }
 
-    /*
-     * @Override
-     * public String toString() {
-     * return "{" +
-     * " autorId='" + getAutorId() + "'" +
-     * ", nom='" + getNom() + "'" +
-     * //", llibres='" + getLlibres() + "'" +
-     * "}";
-     * }
-     */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{ autorId='").append(getAutorId()).append("',");
-        stringBuilder.append(" nom='").append(getNom()).append("',");
-        stringBuilder.append(" llibres=[");
-
+        stringBuilder.append(getAutorId() + ": ");
+        stringBuilder.append(getNom() + ", ");
+        stringBuilder.append("Items: [");
         if (llibres != null) {
+            int size = llibres.size();
+            int count = 0;
+
             for (Llibre llibre : llibres) {
-                stringBuilder.append(llibre.toString()).append(", ");
+                count++;
+
+                stringBuilder.append(llibre.getLlibreId()).append(", ")
+                        .append(llibre.getEditorial()).append(", ")
+                        .append(llibre.getNom());
+
+                if (count < size) {
+                    // Si no es el último elemento, agrega el separador "|"
+                    stringBuilder.append(" | ");
+                }
             }
         }
 
-        stringBuilder.append("]}");
+        stringBuilder.append("]");
         return stringBuilder.toString();
     }
 

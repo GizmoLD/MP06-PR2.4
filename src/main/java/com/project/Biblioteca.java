@@ -19,10 +19,10 @@ public class Biblioteca implements Serializable {
     @Column(name = "ciutat")
     private String ciutat;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "Llibre_Biblioteca", 
-        joinColumns = {@JoinColumn(referencedColumnName = "id") }, 
-        inverseJoinColumns = {@JoinColumn(referencedColumnName = "id") })
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @JoinTable(name = "Llibre_Biblioteca", joinColumns = {
+            @JoinColumn(referencedColumnName = "id") }, inverseJoinColumns = {
+                    @JoinColumn(referencedColumnName = "id") })
     private Set<Llibre> llibres;
 
     public Biblioteca() {
@@ -65,20 +65,32 @@ public class Biblioteca implements Serializable {
         this.llibres = llibres;
     }
 
-
     @Override
     public String toString() {
-        //String texto = "";
-        //for (Llibre l : llibres){
-        //    texto = texto + l.toString();
-        //}
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getBibliotecaId() + ": ");
+        stringBuilder.append(getNom() + ", ");
+        stringBuilder.append(getCiutat() + ", ");
+        stringBuilder.append("Llibres: [");
+        if (llibres != null) {
+            int size = llibres.size();
+            int count = 0;
 
-        return "{" +
-            " bibliotecaId='" + getBibliotecaId() + "'" +
-            ", nom='" + getNom() + "'" +
-            ", ciutat='" + getCiutat() + "'" +
-            //", llibres='" + texto + "'" +
-            "}";
+            for (Llibre llibre : llibres) {
+                count++;
+
+                stringBuilder.append(llibre.getLlibreId()).append(", ")
+                        .append(llibre.getEditorial()).append(", ")
+                        .append(llibre.getNom());
+
+                if (count < size) {
+                    // Si no es el último elemento, agrega el separador "|"
+                    stringBuilder.append(" | ");
+                }
+            }
+        }
+        stringBuilder.append("]");
+        return stringBuilder.toString();
     }
 
 }
