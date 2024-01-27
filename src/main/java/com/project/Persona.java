@@ -1,6 +1,9 @@
 package com.project;
 
 import javax.persistence.*;
+
+import org.hibernate.Hibernate;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -13,7 +16,7 @@ public class Persona implements Serializable {
     @Column(name = "id", unique = true, nullable = false)
     private long personaId;
 
-    @Column(name = "dni") //unique = true, nullable = false
+    @Column(name = "dni")
     private String dni;
 
     @Column(name = "nom")
@@ -22,12 +25,9 @@ public class Persona implements Serializable {
     @Column(name = "telefon")
     private String telefon;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-        name = "persona_llibre",
-        joinColumns = {@JoinColumn(referencedColumnName = "id")},
-        inverseJoinColumns = @JoinColumn(referencedColumnName = "id")
-    )
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinTable(name = "persona_llibre", joinColumns = {
+            @JoinColumn(referencedColumnName = "id") }, inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
 
     private Set<Llibre> llibres;
 
@@ -51,6 +51,7 @@ public class Persona implements Serializable {
     public String getDni() {
         return dni;
     }
+
     public void setDni(String dni) {
         this.dni = dni;
     }
@@ -79,16 +80,33 @@ public class Persona implements Serializable {
         this.llibres = llibres;
     }
 
-
+    /*
+     * @Override
+     * public String toString() {
+     * return "{" +
+     * " personaId='" + getPersonaId() + "'" +
+     * ", dni='" + getDni() + "'" +
+     * ", nom='" + getNom() + "'" +
+     * ", telefon='" + getTelefon() + "'" +
+     * //", llibres='" + getLlibres() + "'" +
+     * "}";
+     * }
+     */
     @Override
     public String toString() {
-        return "{" +
-            " personaId='" + getPersonaId() + "'" +
-            ", dni='" + getDni() + "'" +
-            ", nom='" + getNom() + "'" +
-            ", telefon='" + getTelefon() + "'" +
-            //", llibres='" + getLlibres() + "'" +
-            "}";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{ personaId='").append(getPersonaId()).append("',");
+        stringBuilder.append(" dni='").append(getDni()).append("',");
+        stringBuilder.append(" nom='").append(getNom()).append("',");
+        stringBuilder.append(" telefon='").append(getTelefon()).append("',");
+        stringBuilder.append(" llibres=[");
+        if (llibres != null) {
+            for (Llibre llibre : llibres) {
+                stringBuilder.append(llibre.toString()).append(", ");
+            }
+        }
+        stringBuilder.append("]}");
+        return stringBuilder.toString();
     }
 
 }

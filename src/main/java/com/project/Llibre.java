@@ -20,7 +20,7 @@ public class Llibre implements Serializable {
     private String editorial;
 
     @ManyToOne
-    @JoinColumn(name = "autor") //autor_id
+    @JoinColumn(name = "autor") //autor_id ??
     private Autor autor;
 
     @ManyToMany(mappedBy = "llibres")

@@ -1,6 +1,9 @@
 package com.project;
 
 import javax.persistence.*;
+
+import org.hibernate.Hibernate;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -16,7 +19,9 @@ public class Autor implements Serializable {
     @Column(name = "nom")
     private String nom;
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    // @JoinColumn(name = "autor_id") /// cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch=FetchType.EAGER) //por defecto es LAZY
+    //@JoinColumn(name = "autor_id") //autor_id ??
     private Set<Llibre> llibres;
 
     public Autor() {
@@ -43,6 +48,7 @@ public class Autor implements Serializable {
     }
 
     public Set<Llibre> getLlibres() {
+        Hibernate.initialize(llibres);
         return llibres;
     }
 
@@ -50,14 +56,31 @@ public class Autor implements Serializable {
         this.llibres = llibres;
     }
 
-
+    /*
+     * @Override
+     * public String toString() {
+     * return "{" +
+     * " autorId='" + getAutorId() + "'" +
+     * ", nom='" + getNom() + "'" +
+     * //", llibres='" + getLlibres() + "'" +
+     * "}";
+     * }
+     */
     @Override
     public String toString() {
-        return "{" +
-            " autorId='" + getAutorId() + "'" +
-            ", nom='" + getNom() + "'" +
-            //", llibres='" + getLlibres() + "'" +
-            "}";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{ autorId='").append(getAutorId()).append("',");
+        stringBuilder.append(" nom='").append(getNom()).append("',");
+        stringBuilder.append(" llibres=[");
+
+        if (llibres != null) {
+            for (Llibre llibre : llibres) {
+                stringBuilder.append(llibre.toString()).append(", ");
+            }
+        }
+
+        stringBuilder.append("]}");
+        return stringBuilder.toString();
     }
 
 }
