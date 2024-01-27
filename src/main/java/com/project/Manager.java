@@ -36,26 +36,6 @@ public class Manager {
         factory.close();
     }
 
-    public static Employee addEmployee(String firstName, String lastName, int salary) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        Employee result = null;
-        try {
-            tx = session.beginTransaction();
-            result = new Employee(firstName, lastName, salary);
-            session.save(result);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
-            e.printStackTrace();
-            result = null;
-        } finally {
-            session.close();
-        }
-        return result;
-    }
-
     public static <T> T getById(Class<? extends T> clazz, long id) {
         Session session = factory.openSession();
         Transaction tx = null;
@@ -72,46 +52,6 @@ public class Manager {
             session.close();
         }
         return obj;
-    }
-
-    public static void updateContact(long contactId, String name, String email, Set<Employee> employees) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            Contact obj = (Contact) session.get(Contact.class, contactId);
-            obj.setName(name);
-            obj.setEmail(email);
-            obj.setEmployees(employees);
-            session.update(obj);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-    }
-
-    public static void updateEmployee(long employeeId, String firstName, String lastName, int salary) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            Employee obj = (Employee) session.get(Employee.class, employeeId);
-            obj.setFirstName(firstName);
-            obj.setLastName(lastName);
-            obj.setSalary(salary);
-            session.update(obj);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
     }
 
     public static <T> void delete(Class<? extends T> clazz, Serializable id) {
@@ -222,26 +162,6 @@ public class Manager {
             txt = txt.substring(0, txt.length() - 2);
         }
         return txt;
-    }
-
-    public static Contact addContact(String lname, String lmail) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        Contact result = null;
-        try {
-            tx = session.beginTransaction();
-            result = new Contact(lname, lmail);
-            session.save(result);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
-            e.printStackTrace();
-            result = null;
-        } finally {
-            session.close();
-        }
-        return result;
     }
 
     public static Llibre addLlibre(String codigo, String editorial) {

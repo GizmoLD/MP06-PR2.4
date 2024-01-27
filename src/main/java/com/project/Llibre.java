@@ -71,6 +71,7 @@ public class Llibre implements Serializable {
 
     @Override
     public String toString() {
+        
         return 
             getLlibreId() + ": " +
             getNom() + ", " +

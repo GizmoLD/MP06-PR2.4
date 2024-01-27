@@ -3,6 +3,10 @@ package com.project;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Entity
 @Table(name = "Biblioteca", uniqueConstraints = { @UniqueConstraint(columnNames = "id") })
@@ -72,23 +76,24 @@ public class Biblioteca implements Serializable {
         stringBuilder.append(getNom() + ", ");
         stringBuilder.append(getCiutat() + ", ");
         stringBuilder.append("Llibres: [");
+        
         if (llibres != null) {
-            int size = llibres.size();
-            int count = 0;
+            List<Llibre> librosOrdenados = new ArrayList<>(llibres);
+            Collections.sort(librosOrdenados, Comparator.comparingLong(Llibre::getLlibreId));
 
-            for (Llibre llibre : llibres) {
-                count++;
-
+            for (int i = 0; i < librosOrdenados.size(); i++) {
+                Llibre llibre = librosOrdenados.get(i);
+            
                 stringBuilder.append(llibre.getLlibreId()).append(", ")
                         .append(llibre.getEditorial()).append(", ")
                         .append(llibre.getNom());
-
-                if (count < size) {
-                    // Si no es el último elemento, agrega el separador "|"
+            
+                if (i < librosOrdenados.size() - 1) {
                     stringBuilder.append(" | ");
                 }
             }
         }
+
         stringBuilder.append("]");
         return stringBuilder.toString();
     }

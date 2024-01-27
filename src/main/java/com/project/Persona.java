@@ -5,6 +5,10 @@ import javax.persistence.*;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -80,40 +84,32 @@ public class Persona implements Serializable {
         this.llibres = llibres;
     }
 
-    /*
-     * @Override
-     * public String toString() {
-     * return "{" +
-     * " personaId='" + getPersonaId() + "'" +
-     * ", dni='" + getDni() + "'" +
-     * ", nom='" + getNom() + "'" +
-     * ", telefon='" + getTelefon() + "'" +
-     * //", llibres='" + getLlibres() + "'" +
-     * "}";
-     * }
-     */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getPersonaId() + ": ");
+        stringBuilder.append(getNom()+", ");
         stringBuilder.append(getTelefon() + ", ");
         stringBuilder.append("Llibres: [");
+
         if (llibres != null) {
-            int size = llibres.size();
-            int count = 0;
+            List<Llibre> librosOrdenados = new ArrayList<>(llibres);
+            Collections.sort(librosOrdenados, Comparator.comparingLong(Llibre::getLlibreId));
 
-            for (Llibre llibre : llibres) {
-                count++;
-
+            for (int i = 0; i < librosOrdenados.size(); i++) {
+                Llibre llibre = librosOrdenados.get(i);
+            
                 stringBuilder.append(llibre.getLlibreId()).append(", ")
                         .append(llibre.getEditorial()).append(", ")
                         .append(llibre.getNom());
-
-                if (count < size) {
+                        //.append(llibre.get);
+            
+                if (i < librosOrdenados.size() - 1) {
                     stringBuilder.append(" | ");
                 }
             }
         }
+
         stringBuilder.append("]");
         return stringBuilder.toString();
     }
