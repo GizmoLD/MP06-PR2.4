@@ -102,7 +102,7 @@ public class Persona implements Serializable {
                 stringBuilder.append(llibre.getLlibreId()).append(", ")
                         .append(llibre.getEditorial()).append(", ")
                         .append(llibre.getNom());
-                        //.append(llibre.get);
+                        //.append(llibre.getAutor());
             
                 if (i < librosOrdenados.size() - 1) {
                     stringBuilder.append(" | ");

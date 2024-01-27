@@ -23,9 +23,7 @@ public class Autor implements Serializable {
     @Column(name = "nom")
     private String nom;
 
-    // @JoinColumn(name = "autor_id") /// cascade = CascadeType.ALL
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // por defecto es LAZY
-    // @JoinColumn(name = "llibre_id") //autor_id ??
     private Set<Llibre> llibres;
 
     public Autor() {
@@ -80,7 +78,7 @@ public class Autor implements Serializable {
                 stringBuilder.append(llibre.getLlibreId()).append(", ")
                         .append(llibre.getEditorial()).append(", ")
                         .append(llibre.getNom());
-                        //.append(llibre.get);
+                        //.append(llibre.getAutor());
             
                 if (i < librosOrdenados.size() - 1) {
                     stringBuilder.append(" | ");
