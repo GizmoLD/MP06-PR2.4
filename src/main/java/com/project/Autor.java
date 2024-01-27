@@ -1,9 +1,6 @@
 package com.project;
 
 import javax.persistence.*;
-
-import org.hibernate.Hibernate;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +47,6 @@ public class Autor implements Serializable {
     }
 
     public Set<Llibre> getLlibres() {
-        Hibernate.initialize(llibres);
         return llibres;
     }
 
@@ -78,15 +74,12 @@ public class Autor implements Serializable {
                 stringBuilder.append(llibre.getLlibreId()).append(", ")
                         .append(llibre.getEditorial()).append(", ")
                         .append(llibre.getNom());
-                        //.append(llibre.getAutor());
             
                 if (i < librosOrdenados.size() - 1) {
                     stringBuilder.append(" | ");
                 }
             }
         }
-
-
 
         stringBuilder.append("]");
         return stringBuilder.toString();

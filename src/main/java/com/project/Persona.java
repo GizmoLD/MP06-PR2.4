@@ -1,9 +1,6 @@
 package com.project;
 
 import javax.persistence.*;
-
-import org.hibernate.Hibernate;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
